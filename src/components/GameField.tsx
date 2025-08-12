@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import fiverrLogo from '@/assets/fiverr_logo_RGB.png';
@@ -68,6 +68,7 @@ export const GameField: React.FC<GameFieldProps> = ({
   const [hintUsed, setHintUsed] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [zoomScale, setZoomScale] = useState(1);
+  const isMultiTouch = useRef(false);
 
   const { toast } = useToast();
   const accessibilitySettings = accessibilityService.getSettings();
@@ -85,8 +86,10 @@ export const GameField: React.FC<GameFieldProps> = ({
 
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
-        const dist = getDistance(e.touches[0], e.touches[1]);
-        lastDistance.current = dist;
+        isMultiTouch.current = true;
+        lastDistance.current = getDistance(e.touches[0], e.touches[1]);
+      } else if (e.touches.length === 1) {
+        isMultiTouch.current = false;
       }
     };
 
@@ -94,18 +97,19 @@ export const GameField: React.FC<GameFieldProps> = ({
       if (e.touches.length === 2 && lastDistance.current) {
         const dist = getDistance(e.touches[0], e.touches[1]);
         const scaleChange = dist / lastDistance.current;
-        const newScale = Math.min(Math.max(1, zoomScale * scaleChange), 3); // Clamp between 1 and 3
+        const newScale = Math.min(Math.max(1, zoomScale * scaleChange), 3);
         setZoomScale(newScale);
         lastDistance.current = dist;
-        e.preventDefault(); // prevent scroll pinch zoom
+        e.preventDefault(); // Prevent scrolling the page while zooming
       }
     };
 
+
+
     const handleTouchEnd = (e: TouchEvent) => {
       if (e.touches.length < 2) {
+        isMultiTouch.current = false;
         lastDistance.current = null;
-        // Optional: reset zoom after pinch ends
-        // setZoomScale(1);
       }
     };
 
@@ -331,8 +335,7 @@ export const GameField: React.FC<GameFieldProps> = ({
 
   // Handle object click
   const handleObjectClick = useCallback((object: GameObject) => {
-    if (!isPlaying || foundTarget) return;
-
+    if (!isPlaying || foundTarget || isMultiTouch.current) return;
     if (object.isTarget) {
       const timeMs = Date.now() - startTime;
       setFoundTarget(true);
