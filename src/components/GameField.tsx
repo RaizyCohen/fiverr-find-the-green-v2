@@ -7,7 +7,7 @@ import { useMobile } from '@/hooks/use-mobile';
 import { accessibilityService } from '@/lib/accessibility';
 import { getGameMode } from '@/lib/game-modes';
 import { audioService } from '@/lib/audio';
-import {AdaptedAvocadoIcon} from '@/components/ui/avocadoIcon';
+import { AdaptedAvocadoIcon } from '@/components/ui/avocadoIcon';
 
 interface GameObject {
   id: string;
@@ -48,9 +48,9 @@ interface GameFieldProps {
   onTimeUpdate?: (timeRemaining: number) => void;
 }
 
-export const GameField: React.FC<GameFieldProps> = ({ 
-  round, 
-  onRoundComplete, 
+export const GameField: React.FC<GameFieldProps> = ({
+  round,
+  onRoundComplete,
   onGameComplete,
   gameMode = 'classic',
   timeRemaining,
@@ -67,7 +67,7 @@ export const GameField: React.FC<GameFieldProps> = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  
+
   const { toast } = useToast();
   const accessibilitySettings = accessibilityService.getSettings();
 
@@ -78,22 +78,22 @@ export const GameField: React.FC<GameFieldProps> = ({
       Math.floor(baseObjects * Math.pow(1.6, round - 1)),
       isMobile ? 150 : 200
     );
-    
+
     const movementSpeed = Math.min(5 * Math.pow(1.8, round - 1), 50);
     const targetSize = Math.max(50 - round * 2.5, isMobile ? 15 : 10);
     const avocadoSize = Math.max(35 - round * 1.2, isMobile ? 20 : 15);
     const hasMovement = round > 0;
-    
+
     // Adjust for accessibility settings
     const finalTargetSize = accessibilitySettings.largeText ? targetSize * 1.2 : targetSize;
     const finalMovementSpeed = accessibilitySettings.reducedMotion ? movementSpeed * 0.5 : movementSpeed;
-    
-    return { 
-      objectCount, 
-      movementSpeed: finalMovementSpeed, 
-      targetSize: finalTargetSize, 
-      avocadoSize, 
-      hasMovement 
+
+    return {
+      objectCount,
+      movementSpeed: finalMovementSpeed,
+      targetSize: finalTargetSize,
+      avocadoSize,
+      hasMovement
     };
   }, [round, isMobile, accessibilitySettings.largeText, accessibilitySettings.reducedMotion]);
 
@@ -120,10 +120,10 @@ export const GameField: React.FC<GameFieldProps> = ({
   const generatePowerUps = useCallback(() => {
     const powerUpTypes: PowerUp['type'][] = ['zoom', 'freeze', 'hint'];
     const newPowerUps: PowerUp[] = [];
-    
+
     // Add 1-2 power-ups per round
     const powerUpCount = Math.min(2, Math.floor(round / 5) + 1);
-    
+
     for (let i = 0; i < powerUpCount; i++) {
       newPowerUps.push({
         id: `powerup-${i}`,
@@ -133,7 +133,7 @@ export const GameField: React.FC<GameFieldProps> = ({
         collected: false
       });
     }
-    
+
     setPowerUps(newPowerUps);
   }, [round]);
 
@@ -171,16 +171,16 @@ export const GameField: React.FC<GameFieldProps> = ({
   const generateObjects = useCallback(() => {
     const { objectCount, targetSize, avocadoSize } = getDifficulty();
     const newObjects: GameObject[] = [];
-    
+
     // Create avocados with size and color variation
     for (let i = 0; i < objectCount - 1; i++) {
       // Add random size variation to avocados
       const sizeVariation = 0.7 + Math.random() * 0.6; // 0.7 to 1.3 multiplier
       const finalAvocadoSize = avocadoSize * sizeVariation;
-      
+
       // Add color variation
       const colorVariation = Math.random(); // 0 to 1 for different shades
-      
+
       newObjects.push({
         id: `avocado-${i}`,
         x: Math.random() * 85 + 5, // 5-90% to keep within bounds
@@ -192,7 +192,7 @@ export const GameField: React.FC<GameFieldProps> = ({
         colorVariation
       });
     }
-    
+
     // Add the Fiverr logo target (STATIONARY)
     newObjects.push({
       id: 'fiverr-target',
@@ -202,7 +202,7 @@ export const GameField: React.FC<GameFieldProps> = ({
       size: targetSize
       // No velocity - target stays stationary
     });
-    
+
     setObjects(newObjects);
   }, [getDifficulty]);
 
@@ -230,26 +230,26 @@ export const GameField: React.FC<GameFieldProps> = ({
   // Handle power-up collection
   const handlePowerUpClick = useCallback((powerUp: PowerUp) => {
     if (!isPlaying || foundTarget) return;
-    
+
     // Handle side panel powerups differently
     if (powerUp.isSidePanel) {
       // Reset side panel powerup after use
-      setSidePanelPowerUps(prev => prev.map(p => 
+      setSidePanelPowerUps(prev => prev.map(p =>
         p.id === powerUp.id ? { ...p, collected: false } : p
       ));
-      
+
       // Create particle effect at center of screen for side panel powerups
       createParticleExplosion(50, 50, '#10b981');
     } else {
       // Regular powerups get collected
-      setPowerUps(prev => prev.map(p => 
+      setPowerUps(prev => prev.map(p =>
         p.id === powerUp.id ? { ...p, collected: true } : p
       ));
-      
+
       // Create particle effect at powerup location
       createParticleExplosion(powerUp.x, powerUp.y, '#10b981');
     }
-    
+
     switch (powerUp.type) {
       case 'zoom':
         setIsZoomed(true);
@@ -283,30 +283,30 @@ export const GameField: React.FC<GameFieldProps> = ({
   // Handle object click
   const handleObjectClick = useCallback((object: GameObject) => {
     if (!isPlaying || foundTarget) return;
-    
+
     if (object.isTarget) {
       const timeMs = Date.now() - startTime;
       setFoundTarget(true);
       setIsPlaying(false);
-      
+
       // Create victory particle effect
       createParticleExplosion(object.x, object.y, '#f59e0b');
-      
+
       // Screen reader announcement
       if (accessibilitySettings.screenReader) {
         accessibilityService.announceToScreenReader(`Target found! Round ${round} completed in ${(timeMs / 1000).toFixed(2)} seconds`);
       }
-      
+
       // Play sound
       if (accessibilitySettings.soundEnabled) {
         audioService.play('success');
       }
-      
+
       toast({
         title: "Target Found!",
         description: `Round ${round} completed in ${(timeMs / 1000).toFixed(2)}s`,
       });
-      
+
       setTimeout(() => {
         onRoundComplete(timeMs);
         setFoundTarget(false);
@@ -315,17 +315,17 @@ export const GameField: React.FC<GameFieldProps> = ({
     } else {
       // Wrong object clicked - create negative particle effect
       createParticleExplosion(object.x, object.y, '#ef4444');
-      
+
       // Screen reader announcement
       if (accessibilitySettings.screenReader) {
         accessibilityService.announceToScreenReader('Wrong object clicked. Keep looking for the Fiverr logo');
       }
-      
+
       // Play sound
       if (accessibilitySettings.soundEnabled) {
         audioService.play('error');
       }
-      
+
       toast({
         title: "Wrong Object!",
         description: "That's an avocado, not the Fiverr logo!",
@@ -337,21 +337,21 @@ export const GameField: React.FC<GameFieldProps> = ({
   // Animation loop for moving objects
   useEffect(() => {
     if (!isPlaying || isFrozen) return;
-    
+
     const { hasMovement, movementSpeed } = getDifficulty();
     if (!hasMovement) return;
-    
+
     const interval = setInterval(() => {
-      setObjects(prevObjects => 
+      setObjects(prevObjects =>
         prevObjects.map(obj => {
           // Skip movement for target (Fiverr logo)
           if (obj.isTarget || !obj.velocityX || !obj.velocityY) return obj;
-          
+
           let newX = obj.x + obj.velocityX * movementSpeed;
           let newY = obj.y + obj.velocityY * movementSpeed;
           let newVelX = obj.velocityX;
           let newVelY = obj.velocityY;
-          
+
           // Bounce off edges
           if (newX <= 2 || newX >= 93) {
             newVelX = -newVelX;
@@ -361,7 +361,7 @@ export const GameField: React.FC<GameFieldProps> = ({
             newVelY = -newVelY;
             newY = Math.max(2, Math.min(93, newY));
           }
-          
+
           return {
             ...obj,
             x: newX,
@@ -372,16 +372,16 @@ export const GameField: React.FC<GameFieldProps> = ({
         })
       );
     }, 50);
-    
+
     return () => clearInterval(interval);
   }, [isPlaying, isFrozen, getDifficulty]);
 
   // Particle animation loop
   useEffect(() => {
     if (particles.length === 0) return;
-    
+
     const interval = setInterval(() => {
-      setParticles(prev => 
+      setParticles(prev =>
         prev
           .map(particle => ({
             ...particle,
@@ -392,7 +392,7 @@ export const GameField: React.FC<GameFieldProps> = ({
           .filter(particle => particle.life > 0)
       );
     }, 16); // 60fps
-    
+
     return () => clearInterval(interval);
   }, [particles]);
 
@@ -406,186 +406,187 @@ export const GameField: React.FC<GameFieldProps> = ({
   }, [round, startRound]);
 
   return (
-    <div 
-      className="relative w-full h-full bg-game-bg border-4 border-primary pixel-border overflow-hidden"
-      style={{
-        touchAction: 'none',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        WebkitTouchCallout: 'none'
-      }}
-      role="application"
-      aria-label="Find the Fiverr Logo game field"
-    >
-      {/* Time-based mode overlay */}
-      {timeRemaining !== undefined && (
-        <div className="absolute top-4 right-4 z-50 bg-card border-2 border-primary p-2 pixel-border">
-          <div className="font-pixel text-sm text-primary">TIME</div>
-          <div className="font-pixel text-lg text-accent">
-            {Math.ceil(timeRemaining / 1000)}s
-          </div>
-        </div>
-      )}
+    <div className="relative w-full h-screen">
+      <div
+        className="relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden"
+        style={{
+          touchAction: 'none',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          WebkitTouchCallout: 'none',
+          height: 'calc(100% - 6rem)'
+        }}
+        role="application"
+        aria-label="Find the Fiverr Logo game field"
+      >
+        <div>
+          {/* Time-based mode overlay */}
+          {timeRemaining !== undefined && (
+            <div className="absolute top-4 right-4 z-50 bg-card border-2 border-primary p-2 pixel-border">
+              <div className="font-pixel text-sm text-primary">TIME</div>
+              <div className="font-pixel text-lg text-accent">
+                {Math.ceil(timeRemaining / 1000)}s
+              </div>
+            </div>
+          )}
 
-      {/* Particles */}
-      {particles.map((particle) => (
-        <div
-          key={particle.id}
-          className="absolute w-1 h-1 bg-yellow-400 rounded-full pointer-events-none"
-          style={{
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
-            transform: 'translate(-50%, -50%)',
-            opacity: particle.life / particle.maxLife
-          }}
-        />
-      ))}
-      
-      {/* Visual layer - Fiverr logos (behind avocados) */}
-      {objects.filter(obj => obj.isTarget).map((obj, index) => (
-        <div
-          key={`visual-${obj.id}`}
-          className="absolute z-10"
-          style={{
-            left: `${obj.x}%`,
-            top: `${obj.y}%`,
-            transform: `translate(-50%, -50%) scale(${isZoomed ? 2.5 : 1})`,
-            width: `${getDifficulty().targetSize}px`,
-            height: `${getDifficulty().targetSize}px`,
-            pointerEvents: 'none' // No interaction on visual layer
-          }}
-        >
-          <div className="w-full h-full flex items-center justify-center">
-            <img 
-              src={fiverrLogo} 
-              alt="Fiverr Logo"
-              className="object-contain"
+          {/* Particles */}
+          {particles.map((particle) => (
+            <div
+              key={particle.id}
+              className="absolute w-1 h-1 bg-yellow-400 rounded-full pointer-events-none"
               style={{
-                width: `${Math.max(100 - round * 8, 30)}%`,
-                height: `${Math.max(100 - round * 8, 30)}%`
+                left: `${particle.x}%`,
+                top: `${particle.y}%`,
+                transform: 'translate(-50%, -50%)',
+                opacity: particle.life / particle.maxLife
               }}
-              draggable={false}
             />
-          </div>
-        </div>
-      ))}
+          ))}
 
-      {/* Visual layer - Avocados (in front) */}
-      {objects.filter(obj => !obj.isTarget).map(obj => (
-  <div
-    key={`visual-${obj.id}`}
-    className="absolute z-20"
-    style={{
-      left: `${obj.x}%`,
-      top: `${obj.y}%`,
-      width: `${obj.size}px`,
-      height: `${obj.size}px`,
-      transform: 'translate(-50%, -50%)',
-      pointerEvents: 'none',  // visual layer, no interaction
-    }}
-  >
-    <AdaptedAvocadoIcon
-      size={obj.size* 1.5}
-      rotation={obj.colorVariation * 360}
-    />
-  </div>
-))}
+          {/* Visual layer - Fiverr logos (behind avocados) */}
+          {objects.filter(obj => obj.isTarget).map((obj, index) => (
+            <div
+              key={`visual-${obj.id}`}
+              className="absolute z-10"
+              style={{
+                left: `${obj.x}%`,
+                top: `${obj.y}%`,
+                transform: `translate(-50%, -50%) scale(${isZoomed ? 2.5 : 1})`,
+                width: `${getDifficulty().targetSize}px`,
+                height: `${getDifficulty().targetSize}px`,
+                pointerEvents: 'none' // No interaction on visual layer
+              }}
+            >
+              <div className="w-full h-full flex items-center justify-center">
+                <img
+                  src={fiverrLogo}
+                  alt="Fiverr Logo"
+                  className="object-contain"
+                  style={{
+                    width: `${Math.max(100 - round * 8, 30)}%`,
+                    height: `${Math.max(100 - round * 8, 30)}%`
+                  }}
+                  draggable={false}
+                />
+              </div>
+            </div>
+          ))}
 
-      {/* Interaction layer - All objects (highest z-index) */}
-      {objects.map((obj, index) => (
-        <div
-          key={`interaction-${obj.id}`}
-          className="absolute cursor-pointer transition-transform duration-200 z-30"
-          style={{
-            left: `${obj.x}%`,
-            top: `${obj.y}%`,
-            transform: `translate(-50%, -50%) scale(${isZoomed && obj.isTarget ? 2.5 : 1})`,
-            width: `${obj.isTarget ? getDifficulty().targetSize : obj.size}px`,
-            height: `${obj.isTarget ? getDifficulty().targetSize : obj.size}px`,
-            touchAction: 'manipulation',
-            backgroundColor: 'transparent' // Invisible but clickable
-          }}
-          onClick={() => handleObjectClick(obj)}
-          onTouchStart={(e) => {
-            e.preventDefault();
-            handleObjectClick(obj);
-          }}
-          role="button"
-          tabIndex={accessibilitySettings.keyboardNavigation ? 0 : -1}
-          aria-label={obj.isTarget ? 'Fiverr logo target' : 'Avocado distraction'}
-          onKeyDown={(e) => {
-            if (accessibilitySettings.keyboardNavigation && (e.key === 'Enter' || e.key === ' ')) {
-              e.preventDefault();
-              handleObjectClick(obj);
-            }
-          }}
-        />
-      ))}
+          {/* Visual layer - Avocados (in front) */}
+          {objects.filter(obj => !obj.isTarget).map(obj => (
+            <div
+              key={`visual-${obj.id}`}
+              className="absolute z-20"
+              style={{
+                left: `${obj.x}%`,
+                top: `${obj.y}%`,
+                width: `${obj.size}px`,
+                height: `${obj.size}px`,
+                transform: 'translate(-50%, -50%)',
+                pointerEvents: 'none',  // visual layer, no interaction
+              }}
+            >
+              <AdaptedAvocadoIcon
+                size={obj.size * 1.5}
+                rotation={obj.colorVariation * 360}
+              />
+            </div>
+          ))}
 
-
-
-      {/* Side Panel Power-ups (Zoom, Freeze & Hint) */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-row gap-4 z-40">
-        {sidePanelPowerUps.map((powerUp) => (
-          <div
-            key={powerUp.id}
-            className={`cursor-pointer transition-all duration-200 ${
-              powerUp.collected ? 'opacity-50 scale-90 cursor-not-allowed' : 'hover:scale-110'
-            }`}
-            onClick={() => !powerUp.collected && handlePowerUpClick(powerUp)}
-            onTouchStart={(e) => {
-              if (!powerUp.collected) {
+          {/* Interaction layer - All objects (highest z-index) */}
+          {objects.map((obj, index) => (
+            <div
+              key={`interaction-${obj.id}`}
+              className="absolute cursor-pointer transition-transform duration-200 z-30"
+              style={{
+                left: `${obj.x}%`,
+                top: `${obj.y}%`,
+                transform: `translate(-50%, -50%) scale(${isZoomed && obj.isTarget ? 2.5 : 1})`,
+                width: `${obj.isTarget ? getDifficulty().targetSize : obj.size}px`,
+                height: `${obj.isTarget ? getDifficulty().targetSize : obj.size}px`,
+                touchAction: 'manipulation',
+                backgroundColor: 'transparent' // Invisible but clickable
+              }}
+              onClick={() => handleObjectClick(obj)}
+              onTouchStart={(e) => {
                 e.preventDefault();
-                handlePowerUpClick(powerUp);
-              }
-            }}
-          >
-            <div className={`w-12 h-12 flex items-center justify-center rounded-xl text-xl shadow-lg transition-all duration-300 ${
-              powerUp.type === 'zoom' 
-                ? powerUp.collected 
-                  ? 'bg-gray-400 border-2 border-gray-500' 
-                  : 'bg-blue-500 border-2 border-blue-600 hover:bg-blue-600' 
-                : powerUp.type === 'freeze'
-                  ? powerUp.collected 
-                    ? 'bg-gray-400 border-2 border-gray-500' 
-                    : 'bg-purple-500 border-2 border-purple-600 hover:bg-purple-600'
-                  : powerUp.collected 
-                    ? 'bg-gray-400 border-2 border-gray-500' 
-                    : 'bg-yellow-500 border-2 border-yellow-600 hover:bg-yellow-600'
-            }`}>
-              {powerUp.type === 'zoom' && '🔍'}
-              {powerUp.type === 'freeze' && '⏰'}
-              {powerUp.type === 'hint' && '⚡'}
-            </div>
-            <div className={`text-xs text-center mt-1 font-medium rounded px-2 py-1 transition-colors duration-300 ${
-              powerUp.collected 
-                ? 'text-gray-300 bg-gray-700' 
-                : 'text-white bg-black/70'
-            }`}>
-              {powerUp.type === 'zoom' ? 'ZOOM' : powerUp.type === 'freeze' ? 'FREEZE' : 'HINT'}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Mobile touch overlay for better touch response */}
-      {isMobile && (
-        <div 
-          className="absolute inset-0 z-40"
-          style={{ pointerEvents: 'none' }}
-        />
-      )}
-      
-      {/* Round complete overlay */}
-      {foundTarget && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card border-4 border-primary p-8 pixel-border">
-            <h3 className="font-pixel text-primary text-center text-lg">
-              ROUND {round} COMPLETE!
-            </h3>
-          </div>
+                handleObjectClick(obj);
+              }}
+              role="button"
+              tabIndex={accessibilitySettings.keyboardNavigation ? 0 : -1}
+              aria-label={obj.isTarget ? 'Fiverr logo target' : 'Avocado distraction'}
+              onKeyDown={(e) => {
+                if (accessibilitySettings.keyboardNavigation && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  handleObjectClick(obj);
+                }
+              }}
+            />
+          ))}
         </div>
-      )}
+      </div>
+      <div>
+        {/* Side Panel Power-ups (Zoom, Freeze & Hint) */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-row gap-4 z-40">
+          {sidePanelPowerUps.map((powerUp) => (
+            <div
+              key={powerUp.id}
+              className={`cursor-pointer transition-all duration-200 ${powerUp.collected ? 'opacity-50 scale-90 cursor-not-allowed' : 'hover:scale-110'
+                }`}
+              onClick={() => !powerUp.collected && handlePowerUpClick(powerUp)}
+              onTouchStart={(e) => {
+                if (!powerUp.collected) {
+                  e.preventDefault();
+                  handlePowerUpClick(powerUp);
+                }
+              }}
+            >
+              <div className={`w-12 h-12 flex items-center justify-center rounded-xl text-xl shadow-lg transition-all duration-300 ${powerUp.type === 'zoom'
+                  ? powerUp.collected
+                    ? 'bg-gray-400 border-2 border-gray-500'
+                    : 'bg-blue-500 border-2 border-blue-600 hover:bg-blue-600'
+                  : powerUp.type === 'freeze'
+                    ? powerUp.collected
+                      ? 'bg-gray-400 border-2 border-gray-500'
+                      : 'bg-purple-500 border-2 border-purple-600 hover:bg-purple-600'
+                    : powerUp.collected
+                      ? 'bg-gray-400 border-2 border-gray-500'
+                      : 'bg-yellow-500 border-2 border-yellow-600 hover:bg-yellow-600'
+                }`}>
+                {powerUp.type === 'zoom' && '🔍'}
+                {powerUp.type === 'freeze' && '⏰'}
+                {powerUp.type === 'hint' && '⚡'}
+              </div>
+              <div className={`text-xs text-center mt-1 font-medium rounded px-2 py-1 transition-colors duration-300 ${powerUp.collected
+                  ? 'text-gray-300 bg-gray-700'
+                  : 'text-white bg-black/70'
+                }`}>
+                {powerUp.type === 'zoom' ? 'ZOOM' : powerUp.type === 'freeze' ? 'FREEZE' : 'HINT'}
+              </div>
+            </div>
+          ))}
+          {/* </div> */}
+        </div>
+        {/* Mobile touch overlay for better touch response */}
+        {isMobile && (
+          <div
+            className="absolute inset-0 z-40"
+            style={{ pointerEvents: 'none' }}
+          />
+        )}
+
+        {/* Round complete overlay */}
+        {foundTarget && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-card border-4 border-primary p-8 pixel-border">
+              <h3 className="font-pixel text-primary text-center text-lg">
+                ROUND {round} COMPLETE!
+              </h3>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
