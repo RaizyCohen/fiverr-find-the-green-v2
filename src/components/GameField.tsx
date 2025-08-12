@@ -67,9 +67,58 @@ export const GameField: React.FC<GameFieldProps> = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [zoomScale, setZoomScale] = useState(1);
 
   const { toast } = useToast();
   const accessibilitySettings = accessibilityService.getSettings();
+
+  // Add refs and state for pinch zoom:
+  const pinchRef = React.useRef<HTMLDivElement | null>(null);
+  const lastDistance = React.useRef<number | null>(null);
+
+  function getDistance(touch1: Touch, touch2: Touch) {
+    return Math.hypot(touch2.pageX - touch1.pageX, touch2.pageY - touch1.pageY);
+  }
+  useEffect(() => {
+    const container = pinchRef.current;
+    if (!container) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dist = getDistance(e.touches[0], e.touches[1]);
+        lastDistance.current = dist;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && lastDistance.current) {
+        const dist = getDistance(e.touches[0], e.touches[1]);
+        const scaleChange = dist / lastDistance.current;
+        const newScale = Math.min(Math.max(1, zoomScale * scaleChange), 3); // Clamp between 1 and 3
+        setZoomScale(newScale);
+        lastDistance.current = dist;
+        e.preventDefault(); // prevent scroll pinch zoom
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2) {
+        lastDistance.current = null;
+        // Optional: reset zoom after pinch ends
+        // setZoomScale(1);
+      }
+    };
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [zoomScale]);
 
   // Adjust difficulty based on screen size and accessibility
   const getDifficulty = useCallback(() => {
@@ -409,6 +458,7 @@ export const GameField: React.FC<GameFieldProps> = ({
     <div className="relative w-full min-h-screen">
       <div
         className="relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden"
+        ref={pinchRef}
         style={{
           touchAction: 'none',
           userSelect: 'none',
@@ -416,6 +466,9 @@ export const GameField: React.FC<GameFieldProps> = ({
           WebkitTouchCallout: 'none',
           height: 'calc(100dvh - 6rem)',
           maxHeight: 'calc(100dvh - 6rem)',
+          transform: `scale(${zoomScale})`,
+          transformOrigin: 'center center',
+          transition: 'transform 0.1s ease-out'
         }}
         role="application"
         aria-label="Find the Fiverr Logo game field"
@@ -544,24 +597,24 @@ export const GameField: React.FC<GameFieldProps> = ({
               }}
             >
               <div className={`w-12 h-12 flex items-center justify-center rounded-xl text-xl shadow-lg transition-all duration-300 ${powerUp.type === 'zoom'
+                ? powerUp.collected
+                  ? 'bg-gray-400 border-2 border-gray-500'
+                  : 'bg-blue-500 border-2 border-blue-600 hover:bg-blue-600'
+                : powerUp.type === 'freeze'
                   ? powerUp.collected
                     ? 'bg-gray-400 border-2 border-gray-500'
-                    : 'bg-blue-500 border-2 border-blue-600 hover:bg-blue-600'
-                  : powerUp.type === 'freeze'
-                    ? powerUp.collected
-                      ? 'bg-gray-400 border-2 border-gray-500'
-                      : 'bg-purple-500 border-2 border-purple-600 hover:bg-purple-600'
-                    : powerUp.collected
-                      ? 'bg-gray-400 border-2 border-gray-500'
-                      : 'bg-yellow-500 border-2 border-yellow-600 hover:bg-yellow-600'
+                    : 'bg-purple-500 border-2 border-purple-600 hover:bg-purple-600'
+                  : powerUp.collected
+                    ? 'bg-gray-400 border-2 border-gray-500'
+                    : 'bg-yellow-500 border-2 border-yellow-600 hover:bg-yellow-600'
                 }`}>
                 {powerUp.type === 'zoom' && '🔍'}
                 {powerUp.type === 'freeze' && '⏰'}
                 {powerUp.type === 'hint' && '⚡'}
               </div>
               <div className={`text-xs text-center mt-1 font-medium rounded px-2 py-1 transition-colors duration-300 ${powerUp.collected
-                  ? 'text-gray-300 bg-gray-700'
-                  : 'text-white bg-black/70'
+                ? 'text-gray-300 bg-gray-700'
+                : 'text-white bg-black/70'
                 }`}>
                 {powerUp.type === 'zoom' ? 'ZOOM' : powerUp.type === 'freeze' ? 'FREEZE' : 'HINT'}
               </div>
