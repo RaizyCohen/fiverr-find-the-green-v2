@@ -525,7 +525,9 @@ export const GameField: React.FC<GameFieldProps> = ({
 
 
       {/* Side Panel Power-ups (Zoom, Freeze & Hint) */}
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-4 z-40">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-row gap-4 z-40">
+
+      {/* <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-4 z-40"> */}
         {sidePanelPowerUps.map((powerUp) => (
           <div
             key={powerUp.id}
