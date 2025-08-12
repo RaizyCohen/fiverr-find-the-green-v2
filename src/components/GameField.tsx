@@ -485,7 +485,7 @@ export const GameField: React.FC<GameFieldProps> = ({
     }}
   >
     <AdaptedAvocadoIcon
-      size={obj.size}
+      size={obj.size* 1.5}
       rotation={obj.colorVariation * 360}
     />
   </div>

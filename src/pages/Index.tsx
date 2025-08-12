@@ -320,7 +320,7 @@ export default function Index() {
             FIND THE GREEN
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
           {gameState === 'playing' && (
               <Button
                 onClick={handleEndAndSubmit}
@@ -329,7 +329,7 @@ export default function Index() {
                 className="font-pixel text-xs pixel-border"
                 aria-label="End and submit score"
               >
-                END & SUBMIT
+                {!isMobile && 'END & SUBMIT'}
               </Button>
             )}
           <Button
