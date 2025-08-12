@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Retro palette */
+    --background: 160 22% 10%;       /* Deep green background */
+    --foreground: 0 0% 96%;          /* Light text */
+    --card: 160 20% 14%;             /* Panel green */
+    --card-foreground: 0 0% 96%;
+    --popover: 160 20% 14%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 142 90% 45%;          /* Neon green */
+    --primary-foreground: 160 25% 10%;
+    --secondary: 160 18% 18%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 160 12% 26%;            /* For subtle separators */
+    --muted-foreground: 160 12% 75%;
+    --accent: 30 95% 55%;            /* Orange accent */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 75% 45%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 142 90% 45%;           /* Use neon green for borders */
+    --input: 160 18% 18%;
+    --ring: 142 90% 45%;
+    --radius: 0px;                   /* Sharp corners for pixel look */
+  }
+
+  .dark {
+    /* Keep dark palette consistent with retro theme */
+    --background: 160 22% 10%;
+    --foreground: 0 0% 96%;
+    --card: 160 20% 14%;
+    --card-foreground: 0 0% 96%;
+    --popover: 160 20% 14%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 142 90% 45%;
+    --primary-foreground: 160 25% 10%;
+    --secondary: 160 18% 18%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 160 12% 26%;
+    --muted-foreground: 160 12% 75%;
+    --accent: 30 95% 55%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 142 90% 45%;
+    --input: 160 18% 18%;
+    --ring: 142 90% 45%;
+  }
+}
+
+@layer utilities {
+  .pixel-border {
+    border-style: solid;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+  
+  /* Disable text selection for game elements */
+  .game-field {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+  }
+}
+
+/* Game-specific styles */
+/* Background helpers */
+.game-bg,
+.bg-game-bg {
+  background-color: #0f261b; /* deep green */
+}
+
+.pixel-border {
+  border-style: solid;
+  border-width: 4px;
+  image-rendering: pixelated;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* Accessibility Styles */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 0%;
+  --card-foreground: 0 0% 100%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 100%;
+  --secondary-foreground: 0 0% 0%;
+  --accent: 60 100% 50%;
+  --accent-foreground: 0 0% 0%;
+  --border: 0 0% 100%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 100%;
+}
+
+.high-contrast .game-bg {
+  background: #000000;
+}
+
+/* Color Blind Modes */
+.colorblind-protanopia {
+  --primary: 210 100% 50%;
+  --accent: 30 100% 50%;
+}
+
+.colorblind-deuteranopia {
+  --primary: 210 100% 50%;
+  --accent: 30 100% 50%;
+}
+
+.colorblind-tritanopia {
+  --primary: 300 100% 50%;
+  --accent: 120 100% 50%;
+}
+
+/* Reduced Motion */
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Large Text */
+.large-text {
+  font-size: 1.2em;
+}
+
+.large-text .font-pixel {
+  font-size: 1.3em;
+}
+
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus indicators for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* High contrast focus indicators */
+.high-contrast *:focus-visible {
+  outline: 3px solid #ffff00;
+  outline-offset: 3px;
+}
+
+/* Time-based mode styles */
+.time-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--primary));
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  z-index: 50;
+}
+
+/* Accessibility-friendly animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Enhanced touch targets for mobile accessibility */
+@media (max-width: 768px) {
+  button, 
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
