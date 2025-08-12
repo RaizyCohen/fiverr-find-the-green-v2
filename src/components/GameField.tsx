@@ -406,7 +406,7 @@ export const GameField: React.FC<GameFieldProps> = ({
   }, [round, startRound]);
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full min-h-screen">
       <div
         className="relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden"
         style={{
@@ -414,7 +414,8 @@ export const GameField: React.FC<GameFieldProps> = ({
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTouchCallout: 'none',
-          height: 'calc(100% - 6rem)'
+          height: 'calc(100dvh - 6rem)',
+          maxHeight: 'calc(100dvh - 6rem)',
         }}
         role="application"
         aria-label="Find the Fiverr Logo game field"
@@ -528,7 +529,7 @@ export const GameField: React.FC<GameFieldProps> = ({
       </div>
       <div>
         {/* Side Panel Power-ups (Zoom, Freeze & Hint) */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-row gap-4 z-40">
+        <div className="flex justify-center gap-4 mt-4 z-40">
           {sidePanelPowerUps.map((powerUp) => (
             <div
               key={powerUp.id}
