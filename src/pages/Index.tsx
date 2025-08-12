@@ -7,7 +7,7 @@ import { Settings } from '@/components/Settings';
 import { AccessibilitySettingsPanel } from '@/components/AccessibilitySettings';
 import { Tutorial } from '@/components/Tutorial';
 import { Button } from '@/components/ui/button';
-import { Settings as SettingsIcon, HelpCircle, Trophy, Accessibility, Dices } from 'lucide-react';
+import { Settings as SettingsIcon, HelpCircle, Trophy, Accessibility, Dices, Send } from 'lucide-react';
 import { useMobile } from '@/hooks/use-mobile';
 import { getGameMode } from '@/lib/game-modes';
 import { audioService } from '@/lib/audio';
@@ -348,6 +348,7 @@ export default function Index() {
                 className="font-pixel text-xs pixel-border"
                 aria-label="End and submit score"
               >
+                <Send className="w-3 h-3 mr-1" />
                 {!isMobile && 'END & SUBMIT'}
               </Button>
             )}
