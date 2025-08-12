@@ -426,7 +426,6 @@ export default function Index() {
             onTimeUpdate={handleTimeUpdate}
           />
         </div>
-        <br/>
 
         {/* Game Menu */}
         {gameState === 'menu' || gameState === 'playing' && (
