@@ -83,6 +83,16 @@ export const Tutorial: React.FC<TutorialProps> = ({ onComplete }) => {
             {currentStep === steps.length - 1 ? 'START GAME' : 'NEXT'}
           </Button>
         </div>
+        <br/>
+        <div className="space-y-3">
+          <Button 
+            onClick={skipTutorial}
+            className="w-full font-pixel text-xs pixel-border h-10"
+          >
+            SKIP TO MODE SELECTION
+          </Button>
+        </div>
+        
       </div>
     </div>
   );
