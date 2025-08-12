@@ -308,7 +308,7 @@ export default function Index() {
             />
           </div>
           <div className="font-pixel text-primary text-lg sm:text-xl mt-4">
-            {introStage === 'large' ? 'FIND THE GREEN!' : 
+            {introStage === 'large' ? 'FIND THE LOGO!' : 
              introStage === 'shrinking' ? 'GET READY...' : 'GO!'}
           </div>
         </div>
@@ -336,7 +336,7 @@ export default function Index() {
             <div ref={headerRef} className="flex items-center justify-between gap-1 overflow-hidden">
 
           <div className="font-pixel text-primary text-lg sm:text-xl">
-            FIND THE GREEN
+            FIND THE LOGO
           </div>
           
           <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
