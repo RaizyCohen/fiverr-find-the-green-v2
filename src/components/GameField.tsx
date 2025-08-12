@@ -7,6 +7,7 @@ import { useMobile } from '@/hooks/use-mobile';
 import { accessibilityService } from '@/lib/accessibility';
 import { getGameMode } from '@/lib/game-modes';
 import { audioService } from '@/lib/audio';
+import {AdaptedAvocadoIcon} from '@/components/ui/avocadoIcon';
 
 interface GameObject {
   id: string;
@@ -470,68 +471,25 @@ export const GameField: React.FC<GameFieldProps> = ({
       ))}
 
       {/* Visual layer - Avocados (in front) */}
-      {objects.filter(obj => !obj.isTarget).map((obj, index) => (
-        <div
-          key={`visual-${obj.id}`}
-          className="absolute z-20"
-          style={{
-            left: `${obj.x}%`,
-            top: `${obj.y}%`,
-            transform: `translate(-50%, -50%) scale(1)`,
-            width: `${obj.size}px`,
-            height: `${obj.size}px`,
-            pointerEvents: 'none' // No interaction on visual layer
-          }}
-        >
-          <div 
-            className="w-full h-full relative"
-            style={{
-              borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-              background: `linear-gradient(135deg, #4a5d23 0%, #6b7c32 50%, #8fac4a 100%)`,
-              boxShadow: `
-                inset 0 2px 4px rgba(255,255,255,0.3),
-                inset 0 -2px 4px rgba(0,0,0,0.3),
-                0 2px 8px rgba(0,0,0,0.2)
-              `,
-              transform: `rotate(${obj.colorVariation * 360}deg)`
-            }}
-          >
-            {/* Avocado pit */}
-            <div 
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-              style={{
-                width: '30%',
-                height: '40%',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, #2d1a0f 0%, #1a0f08 100%)',
-                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.1)'
-              }}
-            />
-            
-            {/* Flesh texture */}
-            <div 
-              className="absolute inset-0"
-              style={{
-                borderRadius: 'inherit',
-                background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)`
-              }}
-            />
-            
-            {/* Skin texture dots */}
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-green-800 rounded-full opacity-60"
-                style={{
-                  left: `${20 + i * 20}%`,
-                  top: `${30 + (i % 2) * 20}%`,
-                  transform: `scale(${0.5 + obj.colorVariation * 0.5})`
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
+      {objects.filter(obj => !obj.isTarget).map(obj => (
+  <div
+    key={`visual-${obj.id}`}
+    className="absolute z-20"
+    style={{
+      left: `${obj.x}%`,
+      top: `${obj.y}%`,
+      width: `${obj.size}px`,
+      height: `${obj.size}px`,
+      transform: 'translate(-50%, -50%)',
+      pointerEvents: 'none',  // visual layer, no interaction
+    }}
+  >
+    <AdaptedAvocadoIcon
+      size={obj.size}
+      rotation={obj.colorVariation * 360}
+    />
+  </div>
+))}
 
       {/* Interaction layer - All objects (highest z-index) */}
       {objects.map((obj, index) => (
