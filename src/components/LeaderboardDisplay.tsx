@@ -62,7 +62,8 @@ export const LeaderboardDisplay: React.FC<LeaderboardDisplayProps> = ({ onPlayAg
             <div className="font-pixel text-sm text-muted-foreground">Be the first to submit a score!</div>
           </div>
         ) : (
-          <ScrollArea className="max-h-[60vh] mb-6 pr-2">
+          // <ScrollArea className="max-h-[60vh] mb-6 pr-2">
+            <ScrollArea className="h-64 w-full">
             <div className="space-y-4">
               {leaderboard.map((entry, index) => (
                 <div
