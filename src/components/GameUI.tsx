@@ -42,7 +42,7 @@ export const GameUI: React.FC<GameUIProps> = ({ round, score, totalTime, combo, 
         <div>
           <div className={`font-pixel text-muted-foreground mb-1 ${isMobile ? 'text-xs' : 'text-sm'
             }`}>TIME</div>
-          <div className={`font-pixel ${isMobile ? 'text-lg' : 'text-2xl'
+          <div className={`font-pixel ${isMobile ? 'text-sm' : 'text-2xl'
             } text-black-500`}
           >{formatTime(totalTime)}s</div>
         </div>
