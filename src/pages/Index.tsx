@@ -32,6 +32,22 @@ export default function Index() {
   const [timeRemaining, setTimeRemaining] = useState<number | undefined>(undefined);
   const [submissionSnapshot, setSubmissionSnapshot] = useState<{ score: number; totalTime: number; bestCombo: number } | null>(null);
 
+  const [compact, setCompact] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(() => {
+      const fits = el.scrollWidth <= el.clientWidth;
+      setCompact(!fits);
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Initialize accessibility settings
   useEffect(() => {
     const settings = accessibilityService.getSettings();
@@ -312,16 +328,19 @@ export default function Index() {
   }
 
   return (
+    
     <div className="min-h-screen bg-game-bg p-2 sm:p-4">
       <div className="max-w-4xl mx-auto space-y-2 sm:space-y-4">
         {/* Header with mobile-responsive buttons */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between"> */}
+            <div ref={headerRef} className="flex items-center justify-between gap-1 overflow-hidden">
+
           <div className="font-pixel text-primary text-lg sm:text-xl">
             FIND THE GREEN
           </div>
           
           <div className="flex gap-1 sm:gap-2 flex-wrap justify-end">
-          {gameState === 'playing' && (
+          {(gameState === 'playing' || gameState === 'menu') && (
               <Button
                 onClick={handleEndAndSubmit}
                 variant="outline"
@@ -408,7 +427,7 @@ export default function Index() {
         </div>
 
         {/* Game Menu */}
-        {gameState === 'menu' && (
+        {gameState === 'menu' || gameState === 'playing' && (
           <div className="bg-card border-4 border-primary p-4 sm:p-8 pixel-border text-center">
             <div className="font-pixel mb-6">
               <div className="text-primary text-2xl sm:text-3xl leading-none">FIND THE</div>
@@ -431,7 +450,7 @@ export default function Index() {
                 aria-label="Start game and select mode"
               >
                 <Trophy className="w-4 h-4 mr-2" />
-                START GAME
+                SELECT MODE TO RESTART GAME
               </Button>
             </div>
           </div>
