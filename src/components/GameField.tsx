@@ -450,6 +450,10 @@ export const GameField: React.FC<GameFieldProps> = ({
     return () => clearInterval(interval);
   }, [particles]);
 
+  useEffect(() => {
+    audioService.enableBackgroundMusic();
+  }, []);
+
   // Time-based countdown is handled at a higher level so it always ticks
 
   // Start first round automatically
