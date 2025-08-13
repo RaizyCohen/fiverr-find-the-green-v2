@@ -461,7 +461,7 @@ export const GameField: React.FC<GameFieldProps> = ({
     <div className="relative w-full min-h-screen n flex flex-col">
       <div
         className={`relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden ${
-          isMobile ? 'h-1/2' : 'flex-1'
+          isMobile ? 'h-1/3' : 'flex-1'
         }`}
         ref={pinchRef}
         style={{
