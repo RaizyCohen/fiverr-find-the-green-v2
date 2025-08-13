@@ -345,7 +345,7 @@ export const GameField: React.FC<GameFieldProps> = ({
       createParticleExplosion(object.x, object.y, '#f59e0b');
 
       // Screen reader announcement
-      if (accessibilitySettings.screenReader) {
+      if (accessibilitySettings.screenReader && !isMobile) {
         accessibilityService.announceToScreenReader(`Target found! Round ${round} completed in ${(timeMs / 1000).toFixed(2)} seconds`);
       }
 
@@ -354,10 +354,12 @@ export const GameField: React.FC<GameFieldProps> = ({
         audioService.play('success');
       }
 
-      toast({
-        title: "Target Found!",
-        description: `Round ${round} completed in ${(timeMs / 1000).toFixed(2)}s`,
-      });
+      if (!isMobile) {
+        toast({
+          title: "Target Found!",
+          description: `Round ${round} completed in ${(timeMs / 1000).toFixed(2)}s`,
+        });
+      }
 
       setTimeout(() => {
         onRoundComplete(timeMs);
@@ -467,8 +469,8 @@ export const GameField: React.FC<GameFieldProps> = ({
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTouchCallout: 'none',
-          height:  isMobile ? '50vh' : 'calc(100dvh - 6rem)',
-          maxHeight:  isMobile ? '50vh' : 'calc(100dvh - 6rem)',
+          height: isMobile ? '50vh' : 'calc(100dvh - 6rem)',
+          maxHeight: isMobile ? '50vh' : 'calc(100dvh - 6rem)',
           transform: `scale(${zoomScale})`,
           transformOrigin: 'center center',
           transition: 'transform 0.1s ease-out'
