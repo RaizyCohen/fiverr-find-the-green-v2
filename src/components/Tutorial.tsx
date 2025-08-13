@@ -89,7 +89,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onComplete }) => {
             onClick={skipTutorial}
             className="w-full font-pixel text-xs pixel-border h-10"
           >
-            SKIP TO MODE A
+            SKIP TO MODE B
           </Button>
         </div>
         

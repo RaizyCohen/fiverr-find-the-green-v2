@@ -470,8 +470,8 @@ export const GameField: React.FC<GameFieldProps> = ({
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTouchCallout: 'none',
-          height: 'calc(100dvh - 6rem)',
-          maxHeight: 'calc(100dvh - 6rem)',
+          height: isMobile ? '50vh' : 'calc(100dvh - 6rem)',
+          maxHeight: isMobile ? '50vh' : 'calc(100dvh - 6rem)',
           transform: `scale(${zoomScale})`,
           transformOrigin: 'center center',
           transition: 'transform 0.1s ease-out'
