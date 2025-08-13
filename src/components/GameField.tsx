@@ -458,20 +458,17 @@ export const GameField: React.FC<GameFieldProps> = ({
   }, [round, startRound]);
 
   return (
-    // <div className="relative w-full min-h-screen n flex flex-col">    
-    <div className="relative w-full flex flex-col min-h-screen">
-
+    <div className="relative w-full min-h-screen">
       <div
-        className={`relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden shrink-0 ${isMobile ? 'h-[50vh]' : 'flex-1'
-          }`}
+        className="relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden"
         ref={pinchRef}
         style={{
           touchAction: 'none',
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTouchCallout: 'none',
-          height: isMobile ? '50vh' : 'calc(100dvh - 6rem)',
-          maxHeight: isMobile ? '50vh' : 'calc(100dvh - 6rem)',
+          height:  isMobile ? '50vh' : 'calc(100dvh - 6rem)',
+          maxHeight:  isMobile ? '50vh' : 'calc(100dvh - 6rem)',
           transform: `scale(${zoomScale})`,
           transformOrigin: 'center center',
           transition: 'transform 0.1s ease-out'
@@ -479,8 +476,7 @@ export const GameField: React.FC<GameFieldProps> = ({
         role="application"
         aria-label="Find the Fiverr Logo game field"
       >
-        <div className="relative w-full h-full overflow-auto">
-
+        <div>
           {/* Time-based mode overlay */}
           {timeRemaining !== undefined && (
             <div className="absolute top-4 right-4 z-50 bg-card border-2 border-primary p-2 pixel-border">
@@ -589,9 +585,7 @@ export const GameField: React.FC<GameFieldProps> = ({
       </div>
       <div>
         {/* Side Panel Power-ups (Zoom, Freeze & Hint) */}
-        {/* <div className="flex justify-center gap-4 mt-4 z-40"> */}
-        <div className="flex justify-center gap-4 mt-4 z-40 shrink-0">
-
+        <div className="flex justify-center gap-4 mt-4 z-40">
           {sidePanelPowerUps.map((powerUp) => (
             <div
               key={powerUp.id}
