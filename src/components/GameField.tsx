@@ -458,9 +458,11 @@ export const GameField: React.FC<GameFieldProps> = ({
   }, [round, startRound]);
 
   return (
-    <div className="relative w-full min-h-screen">
+    <div className="relative w-full min-h-screen n flex flex-col">
       <div
-        className="relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden"
+        className={`relative w-full bg-game-bg border-4 border-primary pixel-border overflow-hidden ${
+          isMobile ? 'h-1/2' : 'flex-1'
+        }`}
         ref={pinchRef}
         style={{
           touchAction: 'none',
