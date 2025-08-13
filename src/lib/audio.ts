@@ -65,6 +65,7 @@ class AudioService {
     }
   }
 
+
   play(soundName: string) {
     if (this.isMuted || !this.audioContext || !this.createBeep) return;
 
@@ -110,6 +111,14 @@ class AudioService {
   isMutedState() {
     return this.isMuted;
   }
+
+    // Test method to manually trigger a sound
+    testSound() {
+      console.log('Testing audio system...');
+      console.log('Current mute state:', this.isMuted);
+      console.log('Web Audio API available:', !!(this as any).audioContext);
+      this.play('success');
+    }
 }
 
 export const audioService = new AudioService();
