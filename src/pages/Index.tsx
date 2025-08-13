@@ -54,12 +54,14 @@ export default function Index() {
     accessibilityService.applySettings(settings);
   }, []);
 
-  const calculateScore = useCallback((roundTime: number) => {
-    const timeAdjusted = Math.max(roundTime, 400); // avoid huge scores for very fast taps
-    const score = Math.round((currentRound * 5000) / timeAdjusted);
-    return Math.max(50, score);
-  }, [currentRound]);
+  const calculateScore = useCallback((roundTime: number, currentCombo: number) => {
+    const baseScore = Math.max(1000 - roundTime, 100);
+    const comboBonus = Math.pow(1.2, currentCombo);
+    const roundBonus = Math.pow(1.1, currentRound);
+    return Math.floor(baseScore * comboBonus * roundBonus)}, [currentRound]);
 
+
+  
   const startIntro = useCallback(() => {
     setGameState('intro');
     setIntroStage('large');
@@ -139,7 +141,7 @@ export default function Index() {
   }, []);
 
   const handleRoundComplete = useCallback((roundTime: number) => {
-    const roundScore = calculateScore(roundTime);
+    const roundScore = calculateScore(roundTime, combo);
     setScore(prev => prev + roundScore);
     setTotalTime(prev => prev + roundTime);
     setCombo(prev => prev + 1);
