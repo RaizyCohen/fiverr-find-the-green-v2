@@ -12,6 +12,10 @@ export const Tutorial: React.FC<TutorialProps> = ({ onComplete }) => {
   const steps = [
     {
       title: 'Welcome to Find the Fiverr Logo!',
+      content: '    We vibe coded this game to show you just how fun and easy it is to bring your ideas to life with a Fiverr expert.',
+      icon: <Target className="w-8 h-8 text-primary" />
+    },    {
+      title: 'Welcome to Find the Fiverr Logo!',
       content: 'Your goal is to find the green Fiverr logo hidden among the avocados.',
       icon: <Target className="w-8 h-8 text-primary" />
     },
